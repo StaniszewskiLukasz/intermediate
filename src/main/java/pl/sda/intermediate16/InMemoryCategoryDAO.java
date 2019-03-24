@@ -17,6 +17,18 @@ public class InMemoryCategoryDAO {
 
     @Getter
     private List<Category> categoryList = new ArrayList<>();
+    private static InMemoryCategoryDAO instance; // to jest nasz singleton jedna jedyna instancja
+
+    public static InMemoryCategoryDAO getInstance() { //pobireramy instance jeśli to jest null to go tworzymy i singletona
+        if (instance == (null)) {//pierwsze sprawdzenie, przychodzą trzy wątki, wszyscy sprawdzają czy jetst to null, i jest to null
+            synchronized (InMemoryCategoryDAO.class) { // jak sprawdzą to ta linia przepuszcza dalej tylko jeden wątek, this to pokazanie gdzie ma być dszlaban czyli synchronized
+                if (instance == (null)){//blok synchronized to szlaban puszcza tylko jeden wątek dalej dopóki inny jest w środku
+                    instance = new InMemoryCategoryDAO(); // i ten jeden wątek tworzy instancje
+                }//tam wyżej jest dlatego że metody jest static a klasa jest nie static
+            }
+        }
+        return instance;
+    }
 
     public InMemoryCategoryDAO() {
         initializeCategories();
@@ -79,7 +91,7 @@ public class InMemoryCategoryDAO {
     private void findAndSetParentId(Map<Integer, List<Category>> categoriesMap, int depth, Category c) {
         List<Category> potentialParents = categoriesMap.get(depth - 1);
 
-        Integer parentId = potentialParents==null?null:potentialParents.stream()
+        Integer parentId = potentialParents == null ? null : potentialParents.stream()
                 .map(Category::getId)
                 .filter(id -> id < c.getId())
                 .sorted((a, b) -> b - a)
