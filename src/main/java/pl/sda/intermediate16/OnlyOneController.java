@@ -13,6 +13,7 @@ import java.util.Map;
 @Controller
 public class OnlyOneController { //ta klasa pozwala kontaktować się przeglądarce z naszą aplikacją
 
+    //DEPENDENCY INJECTION
     UserDAO userDAO = new UserDAO();
     UserLoginService usl = new UserLoginService(userDAO);
     CategorySearchService categorySearchService = new CategorySearchService();
