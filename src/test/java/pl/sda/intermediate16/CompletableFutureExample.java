@@ -81,16 +81,22 @@ public class CompletableFutureExample {
 
     @Test
     void completableFuture() {
+        CompletableFuture<String> descr1 = supplyAsync(() -> downloadDescription());
+        CompletableFuture<String> descr2 = supplyAsync(() -> downloadDescription2());
+
+
+        CompletableFuture<String> cf4 = descr1.applyToEitherAsync(descr2, e -> e)
+                .thenApplyAsync(a -> transform(a, descrToString));
+
 
         CompletableFuture<String> cf2 = supplyAsync(() -> downloadPrice())
                 .thenApplyAsync(a -> transform(a, priceToString));
         CompletableFuture<String> cf3 = supplyAsync(() -> downloadPhotos())
                 .thenApplyAsync(a -> transform(a, photosToString));
-        CompletableFuture<String> cf4 = supplyAsync(() -> downloadDescription())
-                .thenApplyAsync(a -> transform(a, descrToString));
+
         CompletableFuture<String> cf1 = supplyAsync(() -> downloadAdditionalInfo())
                 .thenApplyAsync(a -> transform(a, addInfoToString));
-        Stream.of( cf2, cf3, cf4,cf1).forEach(e -> e.join());
+        Stream.of(cf2, cf3, cf4, cf1).forEach(e -> e.join());
 
     }
 
@@ -118,9 +124,15 @@ public class CompletableFutureExample {
 //    }
 
     private String downloadDescription() {
-        simulateDelay(3000);
+        simulateDelay(4000);
         System.out.println(Thread.currentThread().getName() + " opis");
         return "opis";
+    }
+
+    private String downloadDescription2() {
+        simulateDelay(3200);
+        System.out.println(Thread.currentThread().getName() + " opis2");
+        return "opis2";
     }
 
     private BigDecimal downloadPrice() {
