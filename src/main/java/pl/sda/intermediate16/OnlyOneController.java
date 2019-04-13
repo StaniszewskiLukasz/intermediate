@@ -1,5 +1,6 @@
 package pl.sda.intermediate16;
 
+import com.google.gson.Gson;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import pl.sda.intermediate16.categories.CategorySearchService;
 import pl.sda.intermediate16.users.*;
+import pl.sda.intermediate16.weather.WeatherService;
 
 import java.util.Map;
 
@@ -71,6 +73,13 @@ public class OnlyOneController { //ta klasa pozwala kontaktować się przegląda
             UserContextHolder.logUserIn(dto);
         }
         return "index";
-    }
+   }
+
+   @ResponseBody//to mowi, że będzie jsonem a nie nazwą htmla
+   @RequestMapping(value = "/weather", method = RequestMethod.GET)
+    public String showWeather(){
+       WeatherService weatherService = new WeatherService();
+       return new Gson().toJson(weatherService.getWeather());
+   }
 
 }
