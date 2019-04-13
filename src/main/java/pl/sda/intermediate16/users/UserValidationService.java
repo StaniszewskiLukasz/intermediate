@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class UserValidationService {
     public Map<String, String> validate(UserRegistrationDTO dto){
+        //metoda sprawdzająca poprawność danych z rejestrowania wpisanych przez użytkownika
         Map<String, String> errorMap = new HashMap<>();
         String firstName = dto.getFirstName(); //todo remove this messy code
         String lastName = dto.getLastName();
@@ -37,6 +38,8 @@ public class UserValidationService {
             errorMap.put("birthDateValRes", "no chyba nie");
         }
         if (!StringUtils.defaultIfBlank(phone,"").trim().matches("(\\+48 )?([0-9]{9}|([0-9]{3}-){2}[0-9]{3})")) {
+            //jeśli phone będzie null lub blank to dzieki StringUtil.defaultIfBlank
+            // wrzucimy wartość domyslą którą sami wpisujemy
             errorMap.put("phoneValRes", "no chyba nie");
         }
         if (password == null || !password.matches("(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d]).{10,20}")) {

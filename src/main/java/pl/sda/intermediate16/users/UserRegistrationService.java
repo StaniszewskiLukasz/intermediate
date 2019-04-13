@@ -4,6 +4,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class UserRegistrationService {
     UserDAO userDAO;
+    //to jest sposób na ograniczenie instancji userDAO do jednej
 
     public UserRegistrationService(UserDAO userDAO) {
         this.userDAO = userDAO;

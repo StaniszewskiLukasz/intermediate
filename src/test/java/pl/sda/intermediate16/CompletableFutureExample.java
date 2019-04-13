@@ -66,6 +66,8 @@ public class CompletableFutureExample {
         Future<BigDecimal> priceFuture = executorService.submit(() -> downloadPrice());
         Future<String> photosFuture = executorService.submit(() -> downloadPhotos());
         Future<Long> addInfoFuture = executorService.submit(() -> downloadAdditionalInfo());
+        //jest sobie watek main i by samemu nie robić to wyrzuca futury i one trwają
+        // a main na nie czeka i je pyta czy skończyly
 
         // długo trwający proces
 

@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class WeatherService {
     private String apiKey = "ea900b66f547fd7b23625544873a4200";
+    //klucz do uwierzytelniania
     private UserDAO userDAO;
 
     public WeatherService(UserDAO userDAO) {
@@ -18,6 +19,7 @@ public class WeatherService {
     }
 
     public WeatherResult getWeather() {
+        //to już jest rozwiązanie produkcuyjne
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://api.openweathermap.org/")
                 .addConverterFactory(GsonConverterFactory.create())

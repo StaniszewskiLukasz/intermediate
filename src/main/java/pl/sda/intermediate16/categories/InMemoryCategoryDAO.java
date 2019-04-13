@@ -11,17 +11,30 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-public class InMemoryCategoryDAO {
+public class InMemoryCategoryDAO {//DATA ACCESS OBJECT
+    //przygotowywuje listę/zestaw kategorii
+    //każda klasa musi mieć wąskie specyficzne zastosowani by:
+    // czytelność, reużywalność, pojedyncza zadaniowość, łatwe refaktorowanie
 
     @Getter
     private List<Category> categoryList = new ArrayList<>();
     private static InMemoryCategoryDAO instance;
+    // to jest nasz singleton jedna jedyna instancja
+    //by było jedno miejsce które odczytuje dane z pliku
 
     public static InMemoryCategoryDAO getInstance() {
+        //pobireramy instance jeśli to jest null to go tworzymy i singletona
         if (instance == null) { //1
+            // pierwsze sprawdzenie, przychodzą trzy wątki, wszyscy sprawdzają czy jetst to null, i jest to null
             synchronized (InMemoryCategoryDAO.class) { //2
+                // jak sprawdzą to ta linia przepuszcza dalej tylko jeden wątek, this to pokazanie gdzie ma być
+                // szlaban czyli synchronized
                 if (instance == null) { //3
+                    //blok synchronized to szlaban puszcza tylko jeden wątek dalej dopóki inny jest w środku
                     instance = new InMemoryCategoryDAO();
+                    // i ten jeden wątek tworzy instancje
+                    //tam wyżej singleton jest dlatego static że metoda jest też static a klasa jest nie static
+                    // więć metoda nie mogłaby działać
                 }
             }
         }
@@ -68,8 +81,11 @@ public class InMemoryCategoryDAO {
 //                categoriesMap.put(depth,depthCategoryList);
 //            }
 //        }
-        populateParentId(categoriesMap, 0); //rekurencyjnie uzupełniamy parentId kategorii używając do tego mapy i zaczynając od zerowego zagnieżdżenia
-        categoryList = categories; //przypisujemy kategorie do listy w klasie (to jest niejako cache tych kategorii)
+        populateParentId(categoriesMap, 0);
+        //rekurencyjnie uzupełniamy parentId kategorii używając do tego mapy i zaczynając
+        // od zerowego zagnieżdżenia
+        categoryList = categories;
+        //przypisujemy kategorie do listy w klasie (to jest niejako cache tych kategorii)
     }
 
     private void populateParentId(Map<Integer, List<Category>> categoriesMap, int depth) {
@@ -94,7 +110,8 @@ public class InMemoryCategoryDAO {
         c.setParentId(parentId);
     }
 
-    private Integer calculateDepth(String categoryName) { //na podstawie spacji liczymy zagnieżdżenie kategorii
+    private Integer calculateDepth(String categoryName) {
+        //na podstawie spacji liczymy zagnieżdżenie kategorii
         return categoryName.startsWith(" ")
                 ? categoryName.split("\\S+")[0].length()
                 : 0;

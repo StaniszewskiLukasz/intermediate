@@ -8,9 +8,12 @@ import com.google.gson.annotations.SerializedName;
 public class WeatherResult {
 
     @SerializedName("coord")
+    //ta adnotacja jest tutaj niepotrzebna bo jesli nazwa coord jest tutaj taka sama jak w json
     @Expose
+    //Expose jest deafult  jeśli nie ustawimy inaczej
     public Coord coord;
     @SerializedName("weather")
+    //jeśli chcemy usunąć wszystkie to regexem je usuwamy w jntelij
     @Expose
     public List<Weather> weather = null;
     @SerializedName("base")

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Category {
+public class Category {// to są nasze kategorie które różnią się użyciem w stosunku do DTO
 
     private Integer id;
     private Integer parentId;

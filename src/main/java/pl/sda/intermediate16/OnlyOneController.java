@@ -14,6 +14,8 @@ import java.util.Map;
 
 @Controller
 public class OnlyOneController { //ta klasa pozwala kontaktować się przeglądarce z naszą aplikacją
+    //klasa która reaguje na zachowania użytkownika, klikasz lektury i przekazuje to dalej by je
+    // wyszukać jako kategorię
 
     //DEPENDENCY INJECTION
     UserDAO userDAO = new UserDAO(); //one to rule them all
@@ -29,12 +31,15 @@ public class OnlyOneController { //ta klasa pozwala kontaktować się przegląda
 
     //adnotacja
     @RequestMapping("/categories") //pod takim urlem dostępna jest strona z kategoriami
+    //wpisanie categorie w przeglądarce ucuchamia na sz program za to dopowiada ta linijka
     public String categories(String searchText, Model model) {
         model.addAttribute("catsdata", categorySearchService.filterCategories(searchText));
         return "catspage";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
+    //to są nasze metody reagujące na requesty
+    //ta obsługuje żądanie rejestrowania
     public String showRegisterForm(Model model) {
         model.addAttribute("form", new UserRegistrationDTO());
         model.addAttribute("countries", Countries.values());
@@ -83,9 +88,11 @@ public class OnlyOneController { //ta klasa pozwala kontaktować się przegląda
    }
 
    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+   //jeśli kliknie logout to stanie się poniżej
     public String logout(){
         UserContextHolder.logout();
         return "index";
+       //po wylogowaniu ma trafic na index
    }
 
 }

@@ -12,6 +12,7 @@ public class UserDAO { //DATA ACCESS OBJECT - klasa dostepowa do zrodla danych
     private List<User> userList = readUsers();
 
     private List<User> readUsers() {
+        //odczytuje Usera z pliku
         try (FileInputStream fis = new FileInputStream(path);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
             return (List<User>) ois.readObject();
@@ -23,9 +24,13 @@ public class UserDAO { //DATA ACCESS OBJECT - klasa dostepowa do zrodla danych
 
     public void saveUser(User user) {
         userList.add(user);
+        //wzorzec projektowy dekorator
         try (FileOutputStream fos = new FileOutputStream(path);
+             //ten wie gdie ma zapsiać
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            //ten wie co ma zapisać
             oos.writeObject(userList);
+            //ten wie gdzie zapisać
         } catch (IOException e) {
             e.printStackTrace();
         }
