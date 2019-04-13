@@ -5,7 +5,15 @@ import lombok.Data;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
+import java.util.stream.Stream;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class CompletableFutureExample {
 
@@ -27,10 +35,10 @@ public class CompletableFutureExample {
 
     @Test
     void threads() {
-        Thread t1 = new Thread(()->transform(downloadAdditionalInfo(), addInfoToString));
-        Thread t2 = new Thread(()->transform(downloadPrice(), priceToString));
-        Thread t3 = new Thread(()->transform(downloadPhotos(), photosToString));
-        Thread t4 = new Thread(()->transform(downloadDescription(), descrToString));
+        Thread t1 = new Thread(() -> transform(downloadAdditionalInfo(), addInfoToString));
+        Thread t2 = new Thread(() -> transform(downloadPrice(), priceToString));
+        Thread t3 = new Thread(() -> transform(downloadPhotos(), photosToString));
+        Thread t4 = new Thread(() -> transform(downloadDescription(), descrToString));
 
         System.out.println("nadawanie nazw");
 
@@ -49,8 +57,46 @@ public class CompletableFutureExample {
         }
     }
 
+    @Test
+    void futures() {
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        long start = System.currentTimeMillis();
+        System.out.println("Start");
+        Future<String> descrFuture = executorService.submit(() -> downloadDescription());
+        Future<BigDecimal> priceFuture = executorService.submit(() -> downloadPrice());
+        Future<String> photosFuture = executorService.submit(() -> downloadPhotos());
+        Future<Long> addInfoFuture = executorService.submit(() -> downloadAdditionalInfo());
+
+        // długo trwający proces
+
+        executorService.submit(() -> transform(descrFuture.get(), descrToString));
+        executorService.submit(() -> transform(priceFuture.get(), priceToString));
+        executorService.submit(() -> transform(photosFuture.get(), photosToString));
+        executorService.submit(() -> transform(addInfoFuture.get(), addInfoToString));
+        System.out.println("DOWÓD");
+        executorService.shutdown();
+        while (!executorService.isTerminated()) {
+        }
+    }
+
+    @Test
+    void completableFuture() {
+
+        CompletableFuture<String> cf2 = supplyAsync(() -> downloadPrice())
+                .thenApplyAsync(a -> transform(a, priceToString));
+        CompletableFuture<String> cf3 = supplyAsync(() -> downloadPhotos())
+                .thenApplyAsync(a -> transform(a, photosToString));
+        CompletableFuture<String> cf4 = supplyAsync(() -> downloadDescription())
+                .thenApplyAsync(a -> transform(a, descrToString));
+        CompletableFuture<String> cf1 = supplyAsync(() -> downloadAdditionalInfo())
+                .thenApplyAsync(a -> transform(a, addInfoToString));
+        Stream.of( cf2, cf3, cf4,cf1).forEach(e -> e.join());
+
+    }
+
     private <T> String transform(T value, Function<T, String> function) {
         simulateDelay(2000);
+        System.out.println(Thread.currentThread().getName() + " TRANSFORMING: " + value);
         return function.apply(value);
     }
 
@@ -73,21 +119,25 @@ public class CompletableFutureExample {
 
     private String downloadDescription() {
         simulateDelay(3000);
+        System.out.println(Thread.currentThread().getName() + " opis");
         return "opis";
     }
 
     private BigDecimal downloadPrice() {
         simulateDelay(2500);
+        System.out.println(Thread.currentThread().getName() + " price");
         return BigDecimal.valueOf(1000);
     }
 
     private String downloadPhotos() {
         simulateDelay(3000);
+        System.out.println(Thread.currentThread().getName() + " photos");
         return "zdjecia";
     }
 
     private Long downloadAdditionalInfo() {
         simulateDelay(3300);
+        System.out.println(Thread.currentThread().getName() + " addInfo");
         return 30L;
     }
 
