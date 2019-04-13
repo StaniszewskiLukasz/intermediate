@@ -10,7 +10,11 @@ public class UserContextHolder { //info o zalogowanym
         email = dto.getEmail();
     }
 
-    public String getUserLoggedIn(){
+    public static void logout(){
+        email = null;
+    }
+
+    public static String getUserLoggedIn(){
         return email;
     }
 }

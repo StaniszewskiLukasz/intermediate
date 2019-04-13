@@ -16,7 +16,7 @@ import java.util.Map;
 public class OnlyOneController { //ta klasa pozwala kontaktować się przeglądarce z naszą aplikacją
 
     //DEPENDENCY INJECTION
-    UserDAO userDAO = new UserDAO();
+    UserDAO userDAO = new UserDAO(); //one to rule them all
     UserLoginService usl = new UserLoginService(userDAO);
     CategorySearchService categorySearchService = new CategorySearchService();
     UserValidationService userValidationService = new UserValidationService();
@@ -78,8 +78,14 @@ public class OnlyOneController { //ta klasa pozwala kontaktować się przegląda
    @ResponseBody//to mowi, że będzie jsonem a nie nazwą htmla
    @RequestMapping(value = "/weather", method = RequestMethod.GET)
     public String showWeather(){
-       WeatherService weatherService = new WeatherService();
+       WeatherService weatherService = new WeatherService(userDAO);
        return new Gson().toJson(weatherService.getWeather());
+   }
+
+   @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public String logout(){
+        UserContextHolder.logout();
+        return "index";
    }
 
 }
